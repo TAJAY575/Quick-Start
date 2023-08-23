@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Welcome to My Prototype Website</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .content {
+            text-align: center;
+            position: relative;
+        }
+
+        .pressable-button {
+            background-color: #3498db;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .pressable-button:hover {
+            background-color: #2980b9;
+        }
+
+        #fireworks-canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            pointer-events: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="content">
+        <h1>Welcome</h1>
+        <p>This is a prototype website.</p>
+        <p>(^‿^)(^‿^)(^‿^)(^‿^)(^‿^)</p>
+        <i class="fas fa-star"></i>
+        <button class="pressable-button" onclick="launchFireworks()">Launch Fireworks</button>
+    </div>
+    <canvas id="fireworks-canvas"></canvas>
+    <script>
+        function launchFireworks() {
+            const canvas = document.getElementById('fireworks-canvas');
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+
+            const context = canvas.getContext('2d');
+
+            const fireworks = [];
+
+            function createFirework() {
+                const firework = {
+                    x: Math.random() * canvas.width,
+                    y: canvas.height,
+                    color: '#' + Math.floor(Math.random()*16777215).toString(16),
+                    radius: 3,
+                    velocity: {
+                        x: (Math.random() - 0.5) * 10,
+                        y: -Math.random() * 8
+                    },
+                    gravity: 0.2,
+                    opacity: 1
+                };
+
+                fireworks.push(firework);
+            }
+
+            function animateFireworks() {
+                context.clearRect(0, 0, canvas.width, canvas.height);
+
+                for (let i = 0; i < fireworks.length; i++) {
+                    const firework = fireworks[i];
+
+                    firework.velocity.y += firework.gravity;
+                    firework.x += firework.velocity.x;
+                    firework.y += firework.velocity.y;
+                    firework.opacity -= 0.01;
+
+                    context.beginPath();
+                    context.arc(firework.x, firework.y, firework.radius, 0, Math.PI * 2);
+                    context.fillStyle = firework.color;
+                    context.globalAlpha = firework.opacity;
+                    context.fill();
+                }
+
+                fireworks.forEach((firework, index) => {
+                    if (firework.opacity <= 0) {
+                        fireworks.splice(index, 1);
+                    }
+                });
+
+                requestAnimationFrame(animateFireworks);
+            }
+
+            setInterval(createFirework, 200);
+            animateFireworks();
+        }
+    </script>
+</body>
+</html>
